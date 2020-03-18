@@ -1,0 +1,146 @@
+<template>
+<div>
+    <navi></navi>
+    <div class="container">
+        <div class="row">
+            <!--左侧内容区-->
+            <div class="col-8 col-sm-8 col-md-8 col-lg-8 col-xl-8">
+                <!--上方图片轮播-->
+                <div id="carouselExampleInterval" class="carousel slide" data-ride="carousel">
+                    <div class="carousel-inner">
+                        <div class="carousel-item active" data-interval="10000">
+                            <img th:src="${@environment.getProperty('community-carousel-img1')}" class="d-block w-100">
+                        </div>
+                        <div class="carousel-item" data-interval="2000">
+                            <img th:src="${@environment.getProperty('community-carousel-img2')}" class="d-block w-100">
+                        </div>
+                        <div class="carousel-item">
+                            <img th:src="${@environment.getProperty('community-carousel-img3')}" class="d-block w-100">
+                        </div>
+                    </div>
+                    <a class="carousel-control-prev" href="#carouselExampleInterval" role="button" data-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                    <a class="carousel-control-next" href="#carouselExampleInterval" role="button" data-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Next</span>
+                    </a>
+                </div>
+                <!--二级导航栏-->
+                <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                        <ul class="navbar-nav">
+                            <li class="nav-item active">
+                                <a class="nav-link" href="#">推荐</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#">热榜</a>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+
+                <h1>
+                    aaaaaaaaa
+                    <hr>
+                    aaaaaaaaa
+                    <hr>
+                    aaaaaaaaa
+                    <hr>
+                    aaaaaaaaa
+                    <hr>
+                    aaaaaaaaa
+                    <hr>
+                    aaaaaaaaa
+                    <hr>
+                    aaaaaaaaa
+                    <hr>
+                    aaaaaaaaa
+                    <hr>
+                    aaaaaaaaa
+                    <hr>
+                    aaaaaaaaa
+                    <hr>
+                    aaaaaaaaa
+                    <hr>
+                    aaaaaaaaa
+                    <hr>
+                    aaaaaaaaa
+                    <hr>
+                    aaaaaaaaa
+                    <hr>
+                    aaaaaaaaa
+                    <hr>
+                    aaaaaaaaa
+                    <hr>
+                </h1>
+            </div>
+            <!--右侧个人信息-->
+            <div class="col-4 col-sm-4 col-md-4 col-lg-4 col-xl-4">
+                <!--交流分享-->
+                <div class="col-12 communit-share-table">
+                    <header class="header">交流分享</header>
+                    <hr>
+                    <div class="topstoryHeader-right-nav container-fluid">
+                        <div class="row align-content-center">
+                            <div class="col-4">
+                                <a href="/ask" class="index-quick-entry">
+                                    <img src="/icons/question.svg" class="icon">
+                                    <p class="icon_words">提问题</p>
+                                </a>
+                            </div>
+                            <div class="col-4">
+                                <a href="/answer" class="index-quick-entry">
+                                    <img src="/icons/envelope.svg" class="icon">
+                                    <p class="icon_words">去回答</p>
+                                </a>
+                            </div>
+                            <div class="col-4">
+                                <a href="/publish" class="index-quick-entry">
+                                    <img src="/icons/pencil.svg" class="icon">
+                                    <p class="icon_words">写文章</p>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</template>
+
+<script>
+import Navigation from './Navigation'
+
+export default {
+  name: 'Index',
+  components: {
+    'navi': Navigation
+  }
+}
+</script>
+
+<style scoped>
+.topstoryHeader-right-nav {
+    cursor: pointer;
+    text-align: center;
+}
+.communit-share-table {
+    border: 1px solid #CCCCCC;
+    margin: 10px;
+}
+.communit-share-table .icon {
+    width: 32px;
+    height: 32px;
+    color: #CCCCCC;
+}
+.communit-share-table .header {
+    margin: 10px;
+}
+.index-quick-entry {
+    color: inherit;
+    text-decoration: none;
+}
+</style>
