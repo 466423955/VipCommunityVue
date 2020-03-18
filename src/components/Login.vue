@@ -20,16 +20,13 @@
             <input type="checkbox" value="remember-me" id="remember-me"> Remember me
         </label>
     </div>
-    <button class="btn btn-lg btn-primary btn-block" onclick="login_post()">Sign in</button>
+    <button class="btn btn-lg btn-primary btn-block" v-on:click="login_post()">Sign in</button>
     <p class="mt-5 mb-3 text-muted text-center">© 2020-202X</p>
 </div>
 </template>
 
 <script>
-import hex_md5 from './../../static/js/md5.js'
-
 export default {
-    el:'#login',
     name: 'Login',
     methods:{
         setCookie:function(cname,cvalue,exhours){
@@ -40,36 +37,38 @@ export default {
         },
         login_post:function(){
             var email = $('#inputEmail').val();
-            var password = $('inputPassword').val();
+            var password = $('#inputPassword').val();
             var remember = $('#remember-me').prop('checked');
             if (!email || !password) {
                 alert('邮箱地址和密码不允许为空！');
                 return false;
             }
-            $.ajax({
-                type: 'POST',
-                contentType: 'application/json',
-                url: 'localhost:2021/login',
-                data: JSON.stringify({
-                'inputEmail': email,
-                'inputPassword': hex_md5(password)
-                }),
-                success: function (response) {
-                    if (response.code == 200) {
+            this.$axios.post('/login', JSON.stringify({
+                    'inputEmail': email,
+                    'inputPassword': hex_md5(password)
+                }), {
+                    headers: {
+                        'Content-Type': 'application/json; charset=UTF-8'
+                    }
+                })
+            .then((res) => {
+                var response = res.data;
+                if (response.code == 200) {
                     if(remember){
-                        setCookie('tokenMaxAge', (24*30).toString(), 24*30);
-                        setCookie('token', response.data.token, 24*30);
+                        this.$options.methods.setCookie("tokenMaxAge", (24*30).toString(), 24*30);
+                        this.$options.methods.setCookie("token", response.data.token, 24*30);
                     } else {
-                        setCookie('tokenMaxAge', (0.5).toString(), 0.5);
-                        setCookie('token', response.data.token, 0.5);
+                        this.$options.methods.setCookie("tokenMaxAge", (0.5).toString(), 0.5);
+                        this.$options.methods.setCookie("token", response.data.token, 0.5);
                     }
-                    this.$router.push({path:'/'});
-                    } else {
-                    alert(response.code + ':' + response.message);
-                    }
-                },
-                dataType: 'json'
+                    this.$router.push({ path: '/' });
+                } else {
+                    alert(response.code + ":" + response.message);
+                }
             })
+            .catch((error) => { 
+                alert('服务器好像开小差了！'+error);
+            });
         }
     }
 }
