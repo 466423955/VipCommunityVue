@@ -3,6 +3,8 @@
     <!--导航-->
     <navi></navi>
 
+    
+
     <div class="container">
         <!--面包屑导航-->
         <nav aria-label="breadcrumb">
@@ -26,43 +28,14 @@
                             placeholder="如果问题标题不足以描述清楚您的困惑，您可以在此处详细展开，并可以插入图片来帮助问题回答者更好地理解您的疑惑，更有针对性地帮助您。"></textarea>
                 </div>
                 <div class="form-group">
-                    <label for="question-tag">添加话题：</label>
+                    <div>
+                        <b-modal v-model="modalShow">话题不能超过5个!</b-modal>
+                    </div>
                     <div id="tag-div">
-                        <input type="text" class="form-control" id="question-tag" name="question-tag"
-                            placeholder="添加话题（0/5）" autocomplete="off">
-                        <div class="row">
-                            <div class="col-12 col-sm-12 col-md-10 col-lg-10 col-xl-10">
-                                <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 alert alert-danger"
-                                    v-show="hasError">
-                                    {{errMessage}}
-                                </div>
-                                <!--话题-->
-                                <div id="selectTag" class="selectTag">
-                                    <div>
-                                    <b-card title="Card Title" no-body>
-                                        <b-card-header header-tag="nav">
-                                            <b-nav card-header pills>
-                                                <b-nav-item v-for="(item,index) in tagList" :key="index" v-on:click="clickTagPill(index)" :active="index==selectedIndex">
-                                                    {{item.categoryName}}
-                                                </b-nav-item>
-                                            </b-nav>
-                                        </b-card-header>
-                                        <b-card-body>
-                                            <b-card-text>
-                                                <a v-for="(item,index) in tagDetailList" :key="index">
-                                                    <b-icon-tag></b-icon-tag>{{item}}
-                                                </a>
-                                            </b-card-text>
-                                        </b-card-body>
-                                    </b-card>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-12 col-sm-12 col-md-2 col-lg-2 col-xl-2">
-                                <button type="submit" class="btn btn-primary btn-publish">发布</button>
-                            </div>
+                        <ChooseTag ref='tags'></ChooseTag>
+                        <div class="col-12 col-sm-12 col-md-2 col-lg-2 col-xl-2">
+                            <button type="submit" class="btn btn-primary btn-publish" v-on:click='doPublish'>发布</button>
                         </div>
-
                     </div>
                 </div>
             </div>
@@ -96,6 +69,7 @@
 
 <script>
 import Navigation from './Navigation'
+import ChooseTag from './ChooseTag'
 
 export default {
     name: 'Ask',
@@ -105,71 +79,21 @@ export default {
             errMessage: '',
             tagList: [],
             tagDetailList: [],
-            selectedIndex: 0
+            selectedIndex: 0,
+            tagContent: [],
+            modalShow: false
         }
-    },
-    created(){
-        this.getTags();
     },
     components: {
-        'navi': Navigation
+        'navi': Navigation,
+        'ChooseTag': ChooseTag
     },
     methods: {
-        getTags: function() {
-            this.$axios.get('/api/tag')
-                .then((res) => {
-                    var response = res.data;
-                    if (response.code == 200) {
-                        this.tagList = response.data.tagDTOs;
-                        this.tagDetailList = this.tagList[0].tags;
-                    } else {
-                        alert('服务器好像开小差了！ ('+response.message+')');;
-                    }
-                })
-                .catch((error) => { 
-                    alert('服务器好像开小差了！ tag is null('+error+')');
-                });
-        },
-        clickTagPill: function(index) {
-            this.selectedIndex = index;
-            var selectedTag = this.tagList[index];
-            this.tagDetailList = selectedTag.tags;
+        doPublish: function(){
+            //发布
         }
     }
 }
-
-
-
-//选择话题标签
-function selectTag(value) {
-    var orignValue = $("#question-tag").val();
-    if(orignValue != null && orignValue != ""){
-        var values = orignValue.split(",");
-        if(values.indexOf(value) >= 0){
-            while (values.indexOf(value) >= 0){
-                values.splice(values.indexOf(value), 1);
-            }
-        } else {
-            values.push(value);
-        }
-        $("#question-tag").val(values.join(","));
-    } else {
-        $("#question-tag").val(value);
-    }
-}
-
-$("body").on("click", function (e) {
-    var e = e || window.event; //浏览器兼容性
-    var elem = e.target || e.srcElement;
-    while (elem) { //循环判断至跟节点，防止点击的是div子元素
-        if (elem.id && elem.id == 'tag-div') {
-            $("#selectTag").show();
-            return;
-        }
-        elem = elem.parentNode;
-    }
-    $("#selectTag").hide();
-});
 </script>
 
 <style scoped>
@@ -181,11 +105,6 @@ $("body").on("click", function (e) {
 .form-group .selectTag {
     display: none;
     margin-top: .5rem;
-}
-
-.form-group .selectTag .nav {
-    margin-top: 1rem;
-    margin-bottom: 0.5rem;
 }
 
 .form-group .selectTag .nav .nav-link {
@@ -208,5 +127,22 @@ $("body").on("click", function (e) {
 .btn-publish {
     width:72px;
     margin-top: 1rem;
+}
+
+.tag-badge {
+    margin-left: 5px;
+    margin-bottom: 5px;
+    font: .75rem sans-serif;
+}
+
+.card-header {
+    height: 50px;
+    padding-bottom: 9px;
+    padding-top: 9px;
+}
+
+.card-pill {
+    margin-left: 0px;
+    margin-right: 0px;
 }
 </style>
