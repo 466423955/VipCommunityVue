@@ -43,7 +43,7 @@ export default {
                 alert('邮箱地址和密码不允许为空！');
                 return false;
             }
-            this.$axios.post('/login', JSON.stringify({
+            this.$axios.post('/api/login', JSON.stringify({
                     'inputEmail': email,
                     'inputPassword': hex_md5(password)
                 }), {
@@ -55,15 +55,17 @@ export default {
                 var response = res.data;
                 if (response.code == 200) {
                     if(remember){
-                        this.$options.methods.setCookie("tokenMaxAge", (24*30).toString(), 24*30);
-                        this.$options.methods.setCookie("token", response.data.token, 24*30);
+                        this.$store.commit('Login', response.data, 30*24);
+                        // this.$options.methods.setCookie("tokenMaxAge", (24*30).toString(), 24*30);
+                        // this.$options.methods.setCookie("token", response.data.token, 24*30);
                     } else {
-                        this.$options.methods.setCookie("tokenMaxAge", (0.5).toString(), 0.5);
-                        this.$options.methods.setCookie("token", response.data.token, 0.5);
+                        this.$store.commit('Login', response.data, 0.5);
+                        // this.$options.methods.setCookie("tokenMaxAge", (0.5).toString(), 0.5);
+                        // this.$options.methods.setCookie("token", response.data.token, 0.5);
                     }
                     this.$router.push({ path: '/' });
                 } else {
-                    alert(response.code + ":" + response.message);
+                    alert(response.message);
                 }
             })
             .catch((error) => { 

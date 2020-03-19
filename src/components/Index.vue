@@ -9,13 +9,13 @@
                 <div id="carouselExampleInterval" class="carousel slide" data-ride="carousel">
                     <div class="carousel-inner">
                         <div class="carousel-item active" data-interval="10000">
-                            <img th:src="${@environment.getProperty('community-carousel-img1')}" class="d-block w-100">
+                            <img :src="getCarouselSrc(pic_1st)" class="d-block w-100">
                         </div>
                         <div class="carousel-item" data-interval="2000">
-                            <img th:src="${@environment.getProperty('community-carousel-img2')}" class="d-block w-100">
+                            <img :src="getCarouselSrc(pic_2nd)" class="d-block w-100">
                         </div>
                         <div class="carousel-item">
-                            <img th:src="${@environment.getProperty('community-carousel-img3')}" class="d-block w-100">
+                            <img :src="getCarouselSrc(pic_3rd)" class="d-block w-100">
                         </div>
                     </div>
                     <a class="carousel-control-prev" href="#carouselExampleInterval" role="button" data-slide="prev">
@@ -85,22 +85,22 @@
                     <div class="topstoryHeader-right-nav container-fluid">
                         <div class="row align-content-center">
                             <div class="col-4">
-                                <a href="/ask" class="index-quick-entry">
-                                    <img src="/icons/question.svg" class="icon">
+                                <router-link to="/ask" class="index-quick-entry">
+                                    <img :src="getIconSrc('question.svg')" class="icon">
                                     <p class="icon_words">提问题</p>
-                                </a>
+                                </router-link>
                             </div>
                             <div class="col-4">
-                                <a href="/answer" class="index-quick-entry">
-                                    <img src="/icons/envelope.svg" class="icon">
+                                <router-link to href="/answer" class="index-quick-entry">
+                                    <img :src="getIconSrc('envelope.svg')" class="icon">
                                     <p class="icon_words">去回答</p>
-                                </a>
+                                </router-link>
                             </div>
                             <div class="col-4">
-                                <a href="/publish" class="index-quick-entry">
-                                    <img src="/icons/pencil.svg" class="icon">
+                                <router-link to href="/publish" class="index-quick-entry">
+                                    <img :src="getIconSrc('pencil.svg')" class="icon">
                                     <p class="icon_words">写文章</p>
-                                </a>
+                                </router-link>
                             </div>
                         </div>
                     </div>
@@ -118,6 +118,16 @@ export default {
   name: 'Index',
   components: {
     'navi': Navigation
+  },
+  data(){
+      return {
+        pic_1st: 'lunbo.jpg',
+        pic_2nd: 'lunbo.jpg',
+        pic_3rd: 'lunbo.jpg'
+      }
+  },
+  methods: {
+
   }
 }
 </script>

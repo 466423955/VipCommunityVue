@@ -1,7 +1,7 @@
 <template>
 <div id="nav">
     <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top navigation-panel">
-        <a class="navbar-brand h1" href="/" th:text="${@environment.getProperty('community-name')}"></a>
+        <a class="navbar-brand h1" href="/">{{communityName}}</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
                 aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -10,19 +10,19 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item active">
-                    <router-link to="/"><a class="nav-link" href="/">首页 </a></router-link>
+                    <router-link to="/" class="nav-link">首页 </router-link>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">问答 </a>
+                    <router-link to="/" class="nav-link">问答 </router-link>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">知识 </a>
+                    <router-link to="/" class="nav-link">知识 </router-link>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">课程 </a>
+                    <router-link to="/" class="nav-link">课程 </router-link>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">发现 </a>
+                    <router-link to="/" class="nav-link">发现 </router-link>
                 </li>
             </ul>
             <form class="form-inline my-2 my-lg-0">
@@ -31,26 +31,25 @@
             </form>
             <div class="nav-item">
                 <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">
-                    <img src="/icons/bell.svg" alt="" width="32" height="32" title="bell">
+                    <img  v-bind:src="getIconSrc('bell.svg')" alt="" width="32" height="32" title="bell">
                 </a>
             </div>
 
             <div class="navbar-nav mr-right">
                 <ul class="navbar-nav mr-auto">
-                    <li class="nav-item dropdown" th:if="${session.user != null}">
-
+                    <li class="nav-item dropdown" v-if="getLoginStatus()">
                         <a class="nav-link" href="#" id="navbarDropdown" role="button"
                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <img th:src="${session.user.getAvartarurl()}" class="navigation-avartar">
+                            <img :src="getUserAvatar()" class="navigation-avartar">
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <router-link to="/login"><a class="dropdown-item">个人中心</a></router-link>
-                            <router-link to="/login"><a class="dropdown-item">修改密码</a></router-link>
+                            <router-link to="/profile" class="dropdown-item">个人中心</router-link>
+                            <router-link to="/changePwd" class="dropdown-item">修改密码</router-link>
                             <div class="dropdown-divider"></div>
-                            <router-link to="/logout"><a class="dropdown-item">退出登录</a></router-link>
+                            <router-link to="/logout" class="dropdown-item">退出登录</router-link>
                         </div>
                     </li>
-                    <li th:if="${session.user == null}">
+                    <li v-else>
                         <router-link to="/login"><a class="nav-link">登录</a></router-link>
                     </li>
                 </ul>
@@ -62,7 +61,26 @@
 
 <script>
 export default {
-  name: 'Navigation'
+  name: 'Navigation',
+  data() {
+      return {
+        communityName: this.GLOBAL.COMMUNITY_NAME,
+        bell_svg: this.GLOBAL.ICON_BELL,
+      }
+  },
+  methods: {
+      getUserAvatar(){
+        var userStr = sessionStorage.getItem("user");
+        if(userStr == null) {
+            return '';
+        }
+        var user = JSON.parse(userStr);
+        return this.getAvatarSrc(user.avartarurl);
+      },
+      getLoginStatus(){
+        return sessionStorage.getItem("user") != null;
+      }
+  }
 }
 </script>
 

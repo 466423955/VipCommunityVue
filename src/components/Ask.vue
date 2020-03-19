@@ -7,7 +7,7 @@
         <!--面包屑导航-->
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="/asklist">问答</a></li>
+                <li class="breadcrumb-item"><router-link to="/asklist">问答</router-link></li>
                 <li class="breadcrumb-item active" aria-current="page">提问</li>
             </ol>
         </nav>
@@ -33,39 +33,28 @@
                         <div class="row">
                             <div class="col-12 col-sm-12 col-md-10 col-lg-10 col-xl-10">
                                 <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 alert alert-danger"
-                                    th:if="${error != null}" th:text="${error}"></div>
+                                    v-show="hasError">
+                                    {{errMessage}}
+                                </div>
                                 <!--话题-->
                                 <div id="selectTag" class="selectTag">
-                                    <ul class="mb-3 nav nav-pills" id="pills-tab" role="tablist">
-                                        <li class="nav-item">
-                                            <a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#pills-home"
-                                            role="tab" aria-controls="pills-home" aria-selected="true">开发语言</a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#pills-profile"
-                                            role="tab" aria-controls="pills-profile" aria-selected="false">平台框架</a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a class="nav-link" id="pills-contact-tab" data-toggle="pill" href="#pills-contact"
-                                            role="tab" aria-controls="pills-contact" aria-selected="false">Contact</a>
-                                        </li>
-                                    </ul>
-                                    <div class="tab-content" id="pills-tabContent">
-                                        <div class="tab-pane fade show active" id="pills-home" role="tabpanel"
-                                            aria-labelledby="pills-home-tab">
-                                            <a class="badge badge-info" onclick="selectTag('Java')"><img src="/icons/tag.svg" class="badge-img">Java</a>
-                                            <a class="badge badge-info" onclick="selectTag('C++')"><img src="/icons/tag.svg" class="badge-img">C++</a>
-                                        </div>
-                                        <div class="tab-pane fade" id="pills-profile" role="tabpanel"
-                                            aria-labelledby="pills-profile-tab">
-                                            <a href="#" class="badge badge-info">Spring Boot</a>
-                                            <a href="#" class="badge badge-info">BootStrap</a>
-                                        </div>
-                                        <div class="tab-pane fade" id="pills-contact" role="tabpanel"
-                                            aria-labelledby="pills-contact-tab">
-                                            <a href="#" class="badge badge-info">中文</a>
-                                            <a href="#" class="badge badge-info">中英abc</a>
-                                        </div>
+                                    <div>
+                                    <b-card title="Card Title" no-body>
+                                        <b-card-header header-tag="nav">
+                                            <b-nav card-header pills>
+                                                <b-nav-item v-for="(item,index) in tagList" :key="index" v-on:click="clickTagPill(index)" :active="index==selectedIndex">
+                                                    {{item.categoryName}}
+                                                </b-nav-item>
+                                            </b-nav>
+                                        </b-card-header>
+                                        <b-card-body>
+                                            <b-card-text>
+                                                <a v-for="(item,index) in tagDetailList" :key="index">
+                                                    <b-icon-tag></b-icon-tag>{{item}}
+                                                </a>
+                                            </b-card-text>
+                                        </b-card-body>
+                                    </b-card>
                                     </div>
                                 </div>
                             </div>
@@ -82,21 +71,21 @@
                 <ul style="padding-left: 10px">
                     <li>
                         <h6 class="ask-advice"><strong>善用搜索功能</strong></h6>
-                        <h7>当您的提问已经在社区中被人提出过了，那么重复的问题将较少得到回答者的关注，建议您查看近似问题并获取排序靠前的高质量回答。</h7>
+                        <h6>当您的提问已经在社区中被人提出过了，那么重复的问题将较少得到回答者的关注，建议您查看近似问题并获取排序靠前的高质量回答。</h6>
                     </li>
                     <li>
                         <h6 class="ask-advice"><strong>提问题应简要明确</strong></h6>
-                        <h7>长篇大论且没有重点的问题，无法让回答者快速、深入的理解您想要表达的意思，有指向性的问题才能够帮助您获得更有用的回答。</h7>
+                        <h6>长篇大论且没有重点的问题，无法让回答者快速、深入的理解您想要表达的意思，有指向性的问题才能够帮助您获得更有用的回答。</h6>
                     </li>
                     <li>
                         <h6 class="ask-advice"><strong>问题不宜太过广泛</strong></h6>
-                        <h7>太广泛的问题往往让回答者无从下手。提问时应尽量提供问题相关的详细背景信息，用他人能够理解、具体的词句，回答者更容易对你的问题作出较为全面的解答。</h7>
+                        <h6>太广泛的问题往往让回答者无从下手。提问时应尽量提供问题相关的详细背景信息，用他人能够理解、具体的词句，回答者更容易对你的问题作出较为全面的解答。</h6>
                     </li>
                     <li>
                         <h6 class="ask-advice"><strong>给问题添加一个准确的话题</strong></h6>
-                        <h7>当您的问题匹配到对应的话题时，关注该话题的人才能看到您的问题，进而作出回答。
+                        <h6>当您的问题匹配到对应的话题时，关注该话题的人才能看到您的问题，进而作出回答。
                             提问题的过程，是您对于问题进行的再次思考和挖掘，能够锻炼一个人的思维能力，学会更好的提问，可以帮助我们成为更好的人。
-                        </h7>
+                        </h6>
                     </li>
                 </ul>
             </div>
@@ -109,11 +98,48 @@
 import Navigation from './Navigation'
 
 export default {
-  name: 'Index',
-  components: {
-    'navi': Navigation
-  }
+    name: 'Ask',
+    data() {
+        return {
+            hasError: false,
+            errMessage: '',
+            tagList: [],
+            tagDetailList: [],
+            selectedIndex: 0
+        }
+    },
+    created(){
+        this.getTags();
+    },
+    components: {
+        'navi': Navigation
+    },
+    methods: {
+        getTags: function() {
+            this.$axios.get('/api/tag')
+                .then((res) => {
+                    var response = res.data;
+                    if (response.code == 200) {
+                        this.tagList = response.data.tagDTOs;
+                        this.tagDetailList = this.tagList[0].tags;
+                    } else {
+                        alert('服务器好像开小差了！ ('+response.message+')');;
+                    }
+                })
+                .catch((error) => { 
+                    alert('服务器好像开小差了！ tag is null('+error+')');
+                });
+        },
+        clickTagPill: function(index) {
+            this.selectedIndex = index;
+            var selectedTag = this.tagList[index];
+            this.tagDetailList = selectedTag.tags;
+        }
+    }
 }
+
+
+
 //选择话题标签
 function selectTag(value) {
     var orignValue = $("#question-tag").val();
