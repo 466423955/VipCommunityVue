@@ -6,9 +6,9 @@ import router from './router'
 import axios from 'axios';
 import global_ from './components/Global'
 import Vuex from 'vuex' //引入状态管理
-import './custom.scss'
 import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
 import { BModal, VBModal } from 'bootstrap-vue'
+import './custom.scss'
 
 Vue.use(BootstrapVue)
 Vue.use(IconsPlugin)

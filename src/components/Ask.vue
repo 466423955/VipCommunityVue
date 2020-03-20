@@ -19,14 +19,8 @@
                 </b-form-group>
                 <b-form-group>
                     <label for="question-description">问题补充（必填请参照右侧提示）：</label>
-                    <quill-editor
-                        v-model="content"
-                        ref="myQuillEditor"
-                        :options="editorOption"
-                        @focus="onEditorFocus($event)"
-                        @blur="onEditorBlur($event)"
-                        @change="onEditorChange($event)">
-                    </quill-editor>
+                    <QuillEditor>
+                    </QuillEditor>
                     <!-- <textarea id="question-description" name="question-description" cols="30" rows="10" class="form-control"
                             placeholder="如果问题标题不足以描述清楚您的困惑，您可以在此处详细展开，并可以插入图片来帮助问题回答者更好地理解您的疑惑，更有针对性地帮助您。"></textarea> -->
                 </b-form-group>
@@ -66,12 +60,11 @@
 <script>
 import Navigation from './Navigation'
 import ChooseTag from './ChooseTag'
-import { quillEditor } from 'vue-quill-editor' // 调用富文本编辑器
-import 'quill/dist/quill.snow.css' // 富文本编辑器外部引用样式  三种样式三选一引入即可
-//import 'quill/dist/quill.core.css'
-//import 'quill/dist/quill.bubble.css'
-import * as Quill from 'quill'; // 富文本基于quill
+import QuillEditor from './QuillEditor'
+import Video from './../assets/js/Video.js'; // 插入h5 video视频
+import { Quill } from 'vue-quill-editor'
 
+Quill.register(Video, true);  // 注册video
 export default {
     name: 'Ask',
     data() {
@@ -81,42 +74,18 @@ export default {
             tagList: [],
             tagDetailList: [],
             selectedIndex: 0,
-            tagContent: [],
-            editor: null,   // 富文本编辑器对象
-            content: `<p></p><p><br></p><ol></ol>`, // 富文本编辑器默认内容
-            editorOption: { //  富文本编辑器配置
-                modules: {
-                    
-                },
-                theme: 'snow',
-                placeholder: '请输入正文'
-            }
+            tagContent: []
         }
-    },
-    mounted() {
-        this.editor = this.$refs.myQuillEditor.quill;
     },
     components: {
         'navi': Navigation,
         'ChooseTag': ChooseTag,
-        quillEditor
+        'QuillEditor': QuillEditor
     },
     methods: {
         doPublish: function(){
             //发布
-        },
-        // 准备富文本编辑器
-        onEditorReady (editor) {},
-        // 富文本编辑器 失去焦点事件
-        onEditorBlur (editor) {},
-        // 富文本编辑器 获得焦点事件
-        onEditorFocus (editor) {},
-        // 富文本编辑器 内容改变事件
-        onEditorChange (editor) {}
-    },
-    beforeDestroy() {
-        this.editor = null;
-        delete this.editor;
+        }
     }
 }
 </script>
