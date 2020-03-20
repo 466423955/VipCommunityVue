@@ -1,23 +1,23 @@
 <template>
 <div class="form-signin" id="login">
     <div class="text-center mb-4">
-        <img class="mb-4" src="./../assets/icons/vip.svg" alt="" width="72" height="72">
-        <h1 class="h3 mb-3 font-weight-normal" id="0f1630af-d33c-5690-d675-8ee6a09a57c6">Hasaki VIP Community</h1>
+        <img class="mb-4" :src="getLogoSrc('login.jpg')" width="100%">
+        <!-- <h1 class="h3 mb-3 font-weight-normal" id="0f1630af-d33c-5690-d675-8ee6a09a57c6">{{communityName}}</h1> -->
     </div>
 
     <div class="form-label-group">
-        <input type="email" id="inputEmail" class="form-control" placeholder="Email address" required="" autofocus="">
+        <input type="email" id="inputEmail" class="form-control" placeholder="Email address" required="" autofocus="" v-model="email">
         <label for="inputEmail">Email address</label>
     </div>
 
     <div class="form-label-group">
-        <input type="password" id="inputPassword" class="form-control" placeholder="Password" required="">
+        <input type="password" id="inputPassword" class="form-control" placeholder="Password" required="" v-model="password">
         <label for="inputPassword">Password</label>
     </div>
 
     <div class="checkbox mb-3">
         <label>
-            <input type="checkbox" value="remember-me" id="remember-me"> Remember me
+            <input type="checkbox" value="remember-me" id="remember-me" v-model="remember"> Remember me
         </label>
     </div>
     <button class="btn btn-lg btn-primary btn-block" v-on:click="login_post()">Sign in</button>
@@ -28,24 +28,23 @@
 <script>
 export default {
     name: 'Login',
+    data() {
+        return {
+            communityName: this.GLOBAL.COMMUNITY_NAME,
+            email: '',
+            password: '',
+            remember: false
+        }
+    },
     methods:{
-        setCookie:function(cname,cvalue,exhours){
-            var d = new Date();
-            d.setTime(d.getTime()+(exhours*60*60*1000));
-            var expires = 'expires='+d.toUTCString();
-            document.cookie = cname+'='+cvalue+'; '+expires+'; path=/';
-        },
         login_post:function(){
-            var email = $('#inputEmail').val();
-            var password = $('#inputPassword').val();
-            var remember = $('#remember-me').prop('checked');
-            if (!email || !password) {
+            if (!this.email || !this.password) {
                 alert('邮箱地址和密码不允许为空！');
                 return false;
             }
             this.$axios.post('/api/login', JSON.stringify({
-                    'inputEmail': email,
-                    'inputPassword': hex_md5(password)
+                    'inputEmail': this.email,
+                    'inputPassword': hex_md5(this.password)
                 }), {
                     headers: {
                         'Content-Type': 'application/json; charset=UTF-8'
@@ -54,16 +53,13 @@ export default {
             .then((res) => {
                 var response = res.data;
                 if (response.code == 200) {
-                    if(remember){
+                    if(this.remember){
                         this.$store.commit('Login', response.data, 30*24);
-                        // this.$options.methods.setCookie("tokenMaxAge", (24*30).toString(), 24*30);
-                        // this.$options.methods.setCookie("token", response.data.token, 24*30);
                     } else {
                         this.$store.commit('Login', response.data, 0.5);
-                        // this.$options.methods.setCookie("tokenMaxAge", (0.5).toString(), 0.5);
-                        // this.$options.methods.setCookie("token", response.data.token, 0.5);
                     }
-                    this.$router.push({ path: '/' });
+                    let redirect = decodeURIComponent(this.$route.query.redirect || '/');
+                    this.$router.push({ path: redirect });
                 } else {
                     alert(response.message);
                 }

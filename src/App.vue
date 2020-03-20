@@ -11,7 +11,4 @@ export default {
 </script>
 
 <style>
-body {
-  margin-top: 64px;
-}
 </style>

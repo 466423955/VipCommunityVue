@@ -2,45 +2,41 @@
 <div>
     <!--导航-->
     <navi></navi>
-
-    
-
-    <div class="container">
+    <b-container>
         <!--面包屑导航-->
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><router-link to="/asklist">问答</router-link></li>
-                <li class="breadcrumb-item active" aria-current="page">提问</li>
-            </ol>
-        </nav>
-        <div class="row">
+        <b-breadcrumb>
+            <b-breadcrumb-item to="/asklist">问答</b-breadcrumb-item>
+            <b-breadcrumb-item active>提问</b-breadcrumb-item>
+        </b-breadcrumb>
+        <b-row>
             <!--提问内容-->
-            <div class="col-12 col-sm-12 col-md-8 col-lg-8 col-xl-8">
+            <b-col cols="12" sm="8" md="8" lg="8" xl="8">
                 <input id="question-id" name="question-id" type="hidden">
-                <div class="form-group">
+                <b-form-group>
                     <label for="question-title">问题标题（简单扼要）：</label>
                     <input type="text" class="form-control" id="question-title" name="question-title"
                         placeholder="您需要用简明扼要的语言在这里将问题描述清楚，以便更好地获得答案。">
-                </div>
-                <div class="form-group">
+                </b-form-group>
+                <b-form-group>
                     <label for="question-description">问题补充（必填请参照右侧提示）：</label>
-                    <textarea id="question-description" name="question-description" cols="30" rows="10" class="form-control"
-                            placeholder="如果问题标题不足以描述清楚您的困惑，您可以在此处详细展开，并可以插入图片来帮助问题回答者更好地理解您的疑惑，更有针对性地帮助您。"></textarea>
-                </div>
-                <div class="form-group">
-                    <div>
-                        <b-modal v-model="modalShow">话题不能超过5个!</b-modal>
-                    </div>
-                    <div id="tag-div">
-                        <ChooseTag ref='tags'></ChooseTag>
-                        <div class="col-12 col-sm-12 col-md-2 col-lg-2 col-xl-2">
-                            <button type="submit" class="btn btn-primary btn-publish" v-on:click='doPublish'>发布</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+                    <quill-editor
+                        v-model="content"
+                        ref="myQuillEditor"
+                        :options="editorOption"
+                        @focus="onEditorFocus($event)"
+                        @blur="onEditorBlur($event)"
+                        @change="onEditorChange($event)">
+                    </quill-editor>
+                    <!-- <textarea id="question-description" name="question-description" cols="30" rows="10" class="form-control"
+                            placeholder="如果问题标题不足以描述清楚您的困惑，您可以在此处详细展开，并可以插入图片来帮助问题回答者更好地理解您的疑惑，更有针对性地帮助您。"></textarea> -->
+                </b-form-group>
+                <b-form-group>
+                    <ChooseTag ref='tags'></ChooseTag>
+                    <b-button block variant="primary" v-on:click='doPublish'>发布</b-button>
+                </b-form-group>
+            </b-col>
             <!--提问建议-->
-            <div class="col-12 col-sm-12 col-md-4 col-lg-4 col-xl-4">
+            <b-col cols="12" sm="4" md="4" lg="4" xl="4">
                 <ul style="padding-left: 10px">
                     <li>
                         <h6 class="ask-advice"><strong>善用搜索功能</strong></h6>
@@ -61,15 +57,20 @@
                         </h6>
                     </li>
                 </ul>
-            </div>
-        </div>
-    </div>
+            </b-col>
+        </b-row>
+    </b-container>
 </div>
 </template>
 
 <script>
 import Navigation from './Navigation'
 import ChooseTag from './ChooseTag'
+import { quillEditor } from 'vue-quill-editor' // 调用富文本编辑器
+import 'quill/dist/quill.snow.css' // 富文本编辑器外部引用样式  三种样式三选一引入即可
+//import 'quill/dist/quill.core.css'
+//import 'quill/dist/quill.bubble.css'
+import * as Quill from 'quill'; // 富文本基于quill
 
 export default {
     name: 'Ask',
@@ -81,17 +82,41 @@ export default {
             tagDetailList: [],
             selectedIndex: 0,
             tagContent: [],
-            modalShow: false
+            editor: null,   // 富文本编辑器对象
+            content: `<p></p><p><br></p><ol></ol>`, // 富文本编辑器默认内容
+            editorOption: { //  富文本编辑器配置
+                modules: {
+                    
+                },
+                theme: 'snow',
+                placeholder: '请输入正文'
+            }
         }
+    },
+    mounted() {
+        this.editor = this.$refs.myQuillEditor.quill;
     },
     components: {
         'navi': Navigation,
-        'ChooseTag': ChooseTag
+        'ChooseTag': ChooseTag,
+        quillEditor
     },
     methods: {
         doPublish: function(){
             //发布
-        }
+        },
+        // 准备富文本编辑器
+        onEditorReady (editor) {},
+        // 富文本编辑器 失去焦点事件
+        onEditorBlur (editor) {},
+        // 富文本编辑器 获得焦点事件
+        onEditorFocus (editor) {},
+        // 富文本编辑器 内容改变事件
+        onEditorChange (editor) {}
+    },
+    beforeDestroy() {
+        this.editor = null;
+        delete this.editor;
     }
 }
 </script>
@@ -100,49 +125,5 @@ export default {
 .ask-advice {
     margin-top: 0.5rem;
     margin-bottom: 0.5rem;
-}
-
-.form-group .selectTag {
-    display: none;
-    margin-top: .5rem;
-}
-
-.form-group .selectTag .nav .nav-link {
-    height: 2rem;
-    padding: 0.25rem 1rem;
-    margin-right: 0.25rem;
-}
-
-.form-group .selectTag .tab-content .badge-info {
-    font-size: 1rem;
-    background-color: #b3d7ff;
-}
-
-.form-group .selectTag .tab-content .badge-img {
-    width: 1rem;
-    height: 1rem;
-    margin-right: 0.25rem;
-}
-
-.btn-publish {
-    width:72px;
-    margin-top: 1rem;
-}
-
-.tag-badge {
-    margin-left: 5px;
-    margin-bottom: 5px;
-    font: .75rem sans-serif;
-}
-
-.card-header {
-    height: 50px;
-    padding-bottom: 9px;
-    padding-top: 9px;
-}
-
-.card-pill {
-    margin-left: 0px;
-    margin-right: 0px;
 }
 </style>

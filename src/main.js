@@ -32,6 +32,10 @@ Vue.prototype.getCarouselSrc = function (carousel){
   return require("@/assets/img/carousel/"+carousel);
 }
 
+Vue.prototype.getLogoSrc = function (logo){
+  return require("@/assets/logo/"+logo);
+}
+
 var store = new Vuex.Store({
   state:{
     token:'',
@@ -48,7 +52,7 @@ var store = new Vuex.Store({
       state.maxage = maxage;
       state.expires = new Date(Date.now() + maxage*60*60*1000);
     },
-    Logout(state, userStr, maxage) { // 退出登录
+    Logout(state) { // 退出登录
       sessionStorage.removeItem("token");
       sessionStorage.removeItem("user");
       state.token = '';
@@ -58,23 +62,25 @@ var store = new Vuex.Store({
   }
 });
 
-// router.beforeEach((to, from, next) => {
-//   store.state.token = sessionStorage.getItem('token');//获取本地存储的token
-//   if (to.meta.requireAuth) {  // 判断该路由是否需要登录权限
-//     if (store.state.token !== "") {  // 通过vuex state获取当前的token是否存
-//      next();
-//     }
-//     else {
-//       next({
-//         path: '/login',
-//         query: {redirect: to.fullPath}  // 将跳转的路由path作为参数，登录成功后跳转到该路由
-//       })
-//     }
-//   }
-//   else {
-//     next();
-//   }
-// });
+router.beforeEach((to, from, next) => {
+  store.state.token = sessionStorage.getItem('token');//获取本地存储的token
+  if (to.meta.requireAuth) {  // 判断该路由是否需要登录权限
+
+    if (store.state.token != "" && store.state.token != null) {  // 通过vuex state获取当前的token是否存
+     next();
+    }
+    else {
+      console.log(to.fullPath);
+      next({
+        path: '/login',
+        query: {redirect: to.fullPath}  // 将跳转的路由path作为参数，登录成功后跳转到该路由
+      })
+    }
+  }
+  else {
+    next();
+  }
+});
 
 /* eslint-disable no-new */
 new Vue({

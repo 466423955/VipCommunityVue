@@ -21,7 +21,10 @@ export default new Router({
     {
       path: '/ask',
       name: 'Ask',
-      component: Ask
+      component: Ask,
+      meta: {
+        requireAuth: true
+      }
     }
   ]
 })

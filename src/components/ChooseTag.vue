@@ -1,5 +1,8 @@
 <template>
   <div>
+    <div>
+        <b-modal v-model="modalShow">话题不能超过5个!</b-modal>
+    </div>
     <b-form-group label="添加话题：">
       <b-form-tags v-model="value" no-outer-focus class="mb-2">
         <template v-slot="{ tags, disabled, addTag, removeTag }">
@@ -65,7 +68,8 @@
       return {
         options: [],
         search: '',
-        value: []
+        value: [],
+        modalShow: false
       }
     },
     created(){
@@ -73,8 +77,6 @@
             .then((res) => {
                 var response = res.data;
                 if (response.code == 200) {
-                    this.tagList = response.data.tagDTOs;
-                    this.tagDetailList = this.tagList[0].tags;
                     response.data.tagDTOs.forEach(element => {
                         element.tags.forEach(tag => {
                             this.options.push(tag);
@@ -90,18 +92,14 @@
     },
     computed: {
       criteria() {
-        // Compute the search criteria
         return this.search.trim().toLowerCase()
       },
       availableOptions() {
         const criteria = this.criteria
-        // Filter out already selected options
         const options = this.options.filter(opt => this.value.indexOf(opt) === -1)
         if (criteria) {
-          // Show only options that match criteria
           return options.filter(opt => opt.toLowerCase().indexOf(criteria) > -1);
         }
-        // Show all options available
         return options
       },
       searchDesc() {
@@ -113,8 +111,12 @@
     },
     methods: {
       onOptionClick({ option, addTag }) {
-        addTag(option)
-        this.search = ''
+        if(this.value.length == 5){
+          this.modalShow = true;
+        } else {
+          addTag(option)
+          this.search = ''  
+        }
       }
     }
   }
