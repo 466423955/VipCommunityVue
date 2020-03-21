@@ -78,18 +78,17 @@ export default {
         doPublish: function(){
             var questionContent = this.$refs.contentEditor.content;
             var tagContent = this.$refs.tagEditor.value;
-
             if(this.questionTitle === "" || this.questionTitle === null){
                 this.errorShow = true;
                 this.errorMessage = '问题标题不能为空！';
                 return ;
             }
-            if(this.questionContent === "" || this.questionContent === null){
+            if(questionContent === "" || questionContent === null){
                 this.errorShow = true;
                 this.errorMessage = '问题内容不能为空！';
                 return ;
             }
-            if(this.tagContent === "" || this.tagContent === null){
+            if(tagContent === null || tagContent.length === 0){
                 this.errorShow = true;
                 this.errorMessage = '请选择问题标签！';
                 return ;
@@ -97,18 +96,19 @@ export default {
 
             this.$axios.post('/api/ask', JSON.stringify({
                     'title': this.questionTitle,
-                    'content': this.questionContent,
-                    'tags': this.tagContent
+                    'content': questionContent,
+                    'tags': tagContent
                 }), {
                     headers: {
-                        'userToken': this.$store.userToken,
+                        'userToken': this.$store.state.token,
                         'Content-Type': 'application/json; charset=UTF-8'
                     }
                 })
             .then((res) => {
                 var response = res.data;
                 if (response.code == 200) {
-                    ;
+                    var questionDTO = response.data;
+                    this.$router.push({path:'/question/'+questionDTO.question.id});
                 } else {
                     alert(response.message);
                 }
