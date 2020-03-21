@@ -11,21 +11,19 @@
         <b-row>
             <!--提问内容-->
             <b-col cols="12" sm="8" md="8" lg="8" xl="8">
-                <input id="question-id" name="question-id" type="hidden">
                 <b-form-group>
                     <label for="question-title">问题标题（简单扼要）：</label>
-                    <input type="text" class="form-control" id="question-title" name="question-title"
+                    <input v-model="questionTitle" type="text" class="form-control" id="question-title" name="question-title"
                         placeholder="您需要用简明扼要的语言在这里将问题描述清楚，以便更好地获得答案。">
                 </b-form-group>
                 <b-form-group>
                     <label for="question-description">问题补充（必填请参照右侧提示）：</label>
-                    <QuillEditor>
+                    <QuillEditor ref="contentEditor" placeholder="如果问题标题不足以描述清楚您的困惑，您可以在此处详细展开，并可以插入图片来帮助问题回答者更好地理解您的疑惑，更有针对性地帮助您。" height='200px'>
                     </QuillEditor>
-                    <!-- <textarea id="question-description" name="question-description" cols="30" rows="10" class="form-control"
-                            placeholder="如果问题标题不足以描述清楚您的困惑，您可以在此处详细展开，并可以插入图片来帮助问题回答者更好地理解您的疑惑，更有针对性地帮助您。"></textarea> -->
                 </b-form-group>
                 <b-form-group>
-                    <ChooseTag ref='tags'></ChooseTag>
+                    <ChooseTag ref='tagEditor'></ChooseTag>
+                    <b-alert v-model="errorShow" variant="danger" dismissible>{{errorMessage}}</b-alert>
                     <b-button block variant="primary" v-on:click='doPublish'>发布</b-button>
                 </b-form-group>
             </b-col>
@@ -61,20 +59,14 @@
 import Navigation from './Navigation'
 import ChooseTag from './ChooseTag'
 import QuillEditor from './QuillEditor'
-import Video from './../assets/js/Video.js'; // 插入h5 video视频
-import { Quill } from 'vue-quill-editor'
 
-Quill.register(Video, true);  // 注册video
 export default {
     name: 'Ask',
     data() {
         return {
-            hasError: false,
-            errMessage: '',
-            tagList: [],
-            tagDetailList: [],
-            selectedIndex: 0,
-            tagContent: []
+            questionTitle: '',
+            errorMessage: '',
+            errorShow: false
         }
     },
     components: {
@@ -84,7 +76,47 @@ export default {
     },
     methods: {
         doPublish: function(){
-            //发布
+            var questionContent = this.$refs.contentEditor.content;
+            var tagContent = this.$refs.tagEditor.value;
+
+            if(this.questionTitle === "" || this.questionTitle === null){
+                this.errorShow = true;
+                this.errorMessage = '问题标题不能为空！';
+                return ;
+            }
+            if(this.questionContent === "" || this.questionContent === null){
+                this.errorShow = true;
+                this.errorMessage = '问题内容不能为空！';
+                return ;
+            }
+            if(this.tagContent === "" || this.tagContent === null){
+                this.errorShow = true;
+                this.errorMessage = '请选择问题标签！';
+                return ;
+            }
+
+            this.$axios.post('/api/ask', JSON.stringify({
+                    'title': this.questionTitle,
+                    'content': this.questionContent,
+                    'tags': this.tagContent
+                }), {
+                    headers: {
+                        'userToken': this.$store.userToken,
+                        'Content-Type': 'application/json; charset=UTF-8'
+                    }
+                })
+            .then((res) => {
+                var response = res.data;
+                if (response.code == 200) {
+                    ;
+                } else {
+                    alert(response.message);
+                }
+            })
+            .catch((error) => { 
+                alert('糟糕，服务器好像开小差了！'+error);
+            });
+
         }
     }
 }
@@ -94,5 +126,9 @@ export default {
 .ask-advice {
     margin-top: 0.5rem;
     margin-bottom: 0.5rem;
+}
+input::-webkit-input-placeholder {
+    font-style: italic;
+	font-size:0.8rem;
 }
 </style>
