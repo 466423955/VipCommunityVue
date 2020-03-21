@@ -117,19 +117,19 @@ export default {
             if (e.target.id == 'insert_image') {
                 sfileType = 'image'
                 if (sExtensionName !== 'png' && sExtensionName !== 'jpg' && sExtensionName !== 'jpeg' && sExtensionName !== 'gif') {
-                    alert('不支持该类型图片');
+                    this.toastOfDanger('上传失败', '不支持该类型图片');
                     return;
                 }
             }
             if (e.target.id == 'insert_video') {
                 sfileType = 'video';
                 if (sExtensionName !== 'mp4' && sExtensionName !== 'avi' && sExtensionName !== 'mov') {
-                    alert('不支持该类型视频');
+                    this.toastOfDanger('上传失败', '不支持该类型视频');
                     return;
                 }
                 let maxSize = 100*1024*1024;    // 100MB
                 if (oFile.size > maxSize) {
-                    alert('上传视频大小不能超过100MB');
+                    this.toastOfDanger('上传失败', '上传视频大小不能超过100MB');
                     return;
                 }
             }

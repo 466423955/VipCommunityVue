@@ -39,7 +39,7 @@ export default {
     methods:{
         login_post:function(){
             if (!this.email || !this.password) {
-                alert('邮箱地址和密码不允许为空！');
+                this.toastOfDanger('登录信息不完整', '邮箱地址和密码不允许为空');
                 return false;
             }
             this.$axios.post('/api/login', JSON.stringify({
@@ -61,11 +61,11 @@ export default {
                     let redirect = decodeURIComponent(this.$route.query.redirect || '/');
                     this.$router.push({ path: redirect });
                 } else {
-                    alert(response.message);
+                    this.toastOfDanger('服务端返回异常', '糟糕，服务器好像开小差了'+response.message);
                 }
             })
             .catch((error) => { 
-                alert('服务器好像开小差了！'+error);
+                this.toastOfDanger('服务端连接异常', '糟糕，服务器好像开小差了'+error);
             });
         }
     }

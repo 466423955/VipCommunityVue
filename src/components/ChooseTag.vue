@@ -83,11 +83,11 @@
                         })
                     });
                 } else {
-                    alert('服务器好像开小差了！ ('+response.message+')');;
+                    this.toastOfDanger('服务端返回异常', '糟糕，服务器好像开小差了'+response.message);
                 }
             })
             .catch((error) => { 
-                alert('服务器好像开小差了！ tag is null('+error+')');
+                this.toastOfDanger('服务端连接异常', '糟糕，服务器好像开小差了'+error);
             });
     },
     computed: {

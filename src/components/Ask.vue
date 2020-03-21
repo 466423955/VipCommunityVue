@@ -64,9 +64,7 @@ export default {
     name: 'Ask',
     data() {
         return {
-            questionTitle: '',
-            errorMessage: '',
-            errorShow: false
+            questionTitle: ''
         }
     },
     components: {
@@ -79,18 +77,15 @@ export default {
             var questionContent = this.$refs.contentEditor.content;
             var tagContent = this.$refs.tagEditor.value;
             if(this.questionTitle === "" || this.questionTitle === null){
-                this.errorShow = true;
-                this.errorMessage = '问题标题不能为空！';
+                this.toastOfDanger('提问信息不完整', '问题标题不能为空！');
                 return ;
             }
             if(questionContent === "" || questionContent === null){
-                this.errorShow = true;
-                this.errorMessage = '问题内容不能为空！';
+                this.toastOfDanger('提问信息不完整', '问题内容不能为空！');
                 return ;
             }
             if(tagContent === null || tagContent.length === 0){
-                this.errorShow = true;
-                this.errorMessage = '请选择问题标签！';
+                this.toastOfDanger('提问信息不完整', '请选择问题标签！');
                 return ;
             }
 
@@ -110,11 +105,11 @@ export default {
                     var questionDTO = response.data;
                     this.$router.push({path:'/question/'+questionDTO.question.id});
                 } else {
-                    alert(response.message);
+                    this.toastOfDanger('服务端返回异常', '糟糕，服务器好像开小差了'+response.message);
                 }
             })
             .catch((error) => { 
-                alert('糟糕，服务器好像开小差了！'+error);
+                this.toastOfDanger('服务端连接异常', '糟糕，服务器好像开小差了'+error);
             });
 
         }

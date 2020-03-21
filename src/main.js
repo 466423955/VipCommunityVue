@@ -36,6 +36,16 @@ Vue.prototype.getLogoSrc = function (logo){
   return require("@/assets/logo/"+logo);
 }
 
+Vue.prototype.toastOfDanger = function (subject, description){
+    this.$bvToast.toast(description, {
+        title: subject,
+        toaster: 'b-toaster-top-center',
+        variant: 'danger',
+        solid: true,
+        appendToast: true
+    });
+}
+
 var store = new Vuex.Store({
   state:{
     token:'',
