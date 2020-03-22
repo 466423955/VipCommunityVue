@@ -46,6 +46,41 @@ Vue.prototype.toastOfDanger = function (subject, description){
     });
 }
 
+Vue.prototype.toastOfSuccess = function (subject, description){
+  this.$bvToast.toast(description, {
+      title: subject,
+      toaster: 'b-toaster-top-center',
+      variant: 'success',
+      solid: true,
+      appendToast: true,
+      autohidedelay: 2000
+  });
+}
+
+Vue.prototype.follow = function (isFollowing, type, followId){
+    this.$axios.post(isFollowing ? '/api/follow' : '/api/unfollow', JSON.stringify({
+        'objectType': type,
+        'objectId': followId
+    }), {
+        headers: {
+            'userToken': this.$store.state.token,
+            'Content-Type': 'application/json; charset=UTF-8'
+        }
+    })
+    .then((res) => {
+    var response = res.data;
+    if (response.code == 200) {
+        this.toastOfSuccess(isFollowing?'关注':'取消关注', isFollowing?'关注成功':'取消关注成功');
+    } else {
+        this.toastOfDanger('服务端返回异常', '糟糕，服务器返回了一个错误(code:'+response.code+', message:'+response.message+')');
+    }
+    })
+    .catch((error) => { 
+        this.toastOfDanger('服务端连接异常', '糟糕，服务器返回了一个异常信息('+error+')');
+    });            
+}
+
+
 var store = new Vuex.Store({
   state:{
     token:'',
