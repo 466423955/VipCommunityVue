@@ -5,7 +5,7 @@
         <b-row>
             <b-col cols="12" sm="12" md="12" lg="12" xl="12">
                 <b-card class="mb-2">
-                    <b-card-title>{{title}}</b-card-title>
+                    <b-card-title class="question-title">{{title}}</b-card-title>
                     <b-card-sub-title class="mb-2">
                         <b-button pill variant="outline-primary" v-for="(item,index) in tags" :key=index class="question-tag">
                             <b-icon-tag></b-icon-tag>{{item}}
@@ -18,16 +18,15 @@
                         <a v-on:click="followQuestion()">
                             <b-icon :icon="isFollowQuestion?'star-fill':'star'" alt="isFollowQuestion?'取消关注':'关注问题'"></b-icon> {{isFollowQuestion?'已关注':'关注'}}
                         </a>
+                        <div class="question-footer">
+                            <a href="/">{{questionAuthor}}</a> 提问于 {{questionModifiedTime}}
+                        </div>
                     </template>
                 </b-card>
             </b-col>
             
         </b-row>
     </b-container>
-
-    <textarea v-model="title" name="title" id="title" cols="30" rows="10"></textarea>
-    <textarea v-model="content" name="content" id="content" cols="30" rows="10"></textarea>
-    <textarea v-model="tags" name="tags" id="tags" cols="30" rows="10"></textarea>
 </div>
 </template>
 
@@ -42,7 +41,9 @@ export default {
             title: '',
             content: '',
             tags: [],
-            isFollowQuestion: false
+            isFollowQuestion: false,
+            questionAuthor: '',
+            questionModifiedTime: ''
         }
     },
     components: {
@@ -58,8 +59,10 @@ export default {
                     this.content = response.data.question.description;
                     this.tags = response.data.question.tag.split(',');
                     this.isFollowQuestion = response.data.followed;
-                } else {
-                    this.toastOfDanger('服务端返回异常', '糟糕，服务器好像开小差了'+response.message);
+                    this.questionAuthor = response.data.user.name;
+                    this.questionModifiedTime = moment(response.data.question.gmtModify).format('YYYY-MM-DD HH:mm:ss');
+                } else { 
+                    this.toastOfDanger('服务端返回异常', response.message);
                 }
             })
             .catch((error) => { 
@@ -80,5 +83,14 @@ export default {
     height: 1.2rem;
     font-size: 0.8rem;
     padding: 0 0.8rem;
+}
+.question-footer {
+    float: right;
+    font-size: 0.8rem;
+    font-style: italic;
+    text-decoration:none;
+}
+.question-title {
+    font-size: 2.2rem;
 }
 </style>

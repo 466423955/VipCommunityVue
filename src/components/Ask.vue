@@ -80,6 +80,10 @@ export default {
                 this.toastOfDanger('提问信息不完整', '问题标题不能为空！');
                 return ;
             }
+            if(this.questionTitle.length >= 50){
+                this.toastOfDanger('问题标题太长了，请控制在50字以内，再精简一下吧！');
+                return ;
+            }
             if(questionContent === "" || questionContent === null){
                 this.toastOfDanger('提问信息不完整', '问题内容不能为空！');
                 return ;
