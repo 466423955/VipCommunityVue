@@ -23,7 +23,6 @@
                 </b-form-group>
                 <b-form-group>
                     <ChooseTag ref='tagEditor'></ChooseTag>
-                    <b-alert v-model="errorShow" variant="danger" dismissible>{{errorMessage}}</b-alert>
                     <b-button block variant="primary" v-on:click='doPublish'>发布</b-button>
                 </b-form-group>
             </b-col>

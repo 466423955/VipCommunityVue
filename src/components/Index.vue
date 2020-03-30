@@ -37,40 +37,7 @@
                         <b-nav-item>热榜</b-nav-item>
                     </b-nav>
                     </b-card-header>
-                        <h1>
-                            aaaaaaaaa
-                            <hr>
-                            aaaaaaaaa
-                            <hr>
-                            aaaaaaaaa
-                            <hr>
-                            aaaaaaaaa
-                            <hr>
-                            aaaaaaaaa
-                            <hr>
-                            aaaaaaaaa
-                            <hr>
-                            aaaaaaaaa
-                            <hr>
-                            aaaaaaaaa
-                            <hr>
-                            aaaaaaaaa
-                            <hr>
-                            aaaaaaaaa
-                            <hr>
-                            aaaaaaaaa
-                            <hr>
-                            aaaaaaaaa
-                            <hr>
-                            aaaaaaaaa
-                            <hr>
-                            aaaaaaaaa
-                            <hr>
-                            aaaaaaaaa
-                            <hr>
-                            aaaaaaaaa
-                            <hr>
-                        </h1>
+                        <question-card v-for="(item, index) in questionList" :key=index :questionDTO=item></question-card>
                     <b-card-body class="text-center">
                         <b-card-text>
                             With supporting text below as a natural lead-in to additional content.
@@ -117,21 +84,35 @@
 
 <script>
 import Navigation from './Navigation'
+import QuestionCard from './QuestionCard'
 
 export default {
   name: 'Index',
   components: {
-    'navi': Navigation
+    'navi': Navigation,
+    'question-card': QuestionCard
   },
   data(){
       return {
         pic_1st: 'lunbo.jpg',
         pic_2nd: 'lunbo.jpg',
-        pic_3rd: 'lunbo.jpg'
+        pic_3rd: 'lunbo.jpg',
+        questionList: null
       }
   },
-  methods: {
-
+  mounted() {
+      this.$axios.get('/api/questionlist')
+            .then((res) => {
+                var response = res.data;
+                if (response.code == 200) {
+                    this.questionList = response.data;
+                } else { 
+                    this.toastOfDanger('服务端返回异常', response.message);
+                }
+            })
+            .catch((error) => { 
+                this.toastOfDanger('服务端连接异常', '糟糕，服务器好像开小差了'+error);
+            });
   }
 }
 </script>
